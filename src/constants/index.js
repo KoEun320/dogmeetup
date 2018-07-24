@@ -1,0 +1,1 @@
+export const INITAIL_SETTING = "INITAIL_SETTING";
