@@ -1,6 +1,9 @@
 import { combineReducers } from "redux";
-import initalStatus from "./initialStatus";
+import authentication from "./authentication";
+import dogs from "./dogs";
 
+//컨바인 Reducer는 파일 이름을 키값으로 설정한다. 즉 autentication: {displayname: "" , email: ""}
 export default combineReducers({
-  initalStatus
+  authentication: authentication,
+  dogs : dogs
 });

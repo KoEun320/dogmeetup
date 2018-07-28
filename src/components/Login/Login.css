@@ -1,0 +1,11 @@
+.login {
+        height: 100vh;
+        display: -webkit-flex;
+        display: flex;
+        -webkit-align-items: center;
+        align-items: center;
+        -webkit-justify-content: center;
+        justify-content: center;
+        background-image: url('../../asset/Artboard\ 1@2x.png');
+        background-size: contain;
+}
