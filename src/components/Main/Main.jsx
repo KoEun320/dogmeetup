@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import PropTypes from 'prop-types';
 import { compose, withProps } from "recompose"
 import { withScriptjs, withGoogleMap, GoogleMap, Marker, InfoWindow } from "react-google-maps";
 import ChoiceDog from "../ChoiceDog/ChoiceDog";
@@ -50,7 +49,7 @@ const MapComponent = compose(
               }
             }}
           >
-          {props.openedDogsList.indexOf(data.id) !== -1 && <InfoWindow onCloseClick={()=> props.onToggleCloese(data.id)}>
+          {props.openedDogsList.indexOf(data.id) !== -1 && <InfoWindow onCloseClick={()=> props.onToggleClose(data.id)}>
               <DogsInfo info={dogsListValue} />
             </InfoWindow>
           }
@@ -99,10 +98,10 @@ class Main extends Component {
     });
   }
 
-  onToggleClosed = (id) => {
+  onToggleClose = (id) => {
     let openedDogsListCopy = this.state.openedDogsList.slice();
 
-    var result = openedDogsListCopy.filter((item) => (item === id));
+    let result = openedDogsListCopy.filter((item) => (item !== id));
 
     this.setState({
       openedDogsList: result
@@ -155,7 +154,7 @@ class Main extends Component {
                         onMarkerClick={this.handleMarkerClick}
                         onToggleOpen={this.onToggleOpen.bind(this)}
                         openedDogsList={this.state.openedDogsList}
-                        onToggleCloese={this.onToggleCloese.bind(this)}
+                        onToggleClose={this.onToggleClose.bind(this)}
                         {...this.props}
                       />
                     <div>

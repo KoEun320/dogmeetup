@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import PropTypes from 'prop-types';
 import "./ChoiceDog.css";
 import { withRouter } from 'react-router-dom';
 import ReactDOM from 'react-dom';
