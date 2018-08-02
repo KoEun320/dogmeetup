@@ -1,0 +1,13 @@
+ul {
+    list-style: none;
+}
+.dog_profile > li > img {
+    border: 2px solid #d6619c;
+    border-radius: 40px;
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+}
+.dog_profile > li {
+    line-height: 43px;
+}

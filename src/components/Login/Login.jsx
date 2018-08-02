@@ -1,13 +1,9 @@
 import React, { Component } from "react";
 import PropTypes from 'prop-types';
 import "./Login.css";
-import { Redirect, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 
 class Login extends Component {
-  componentDidMount() {
-    this.props.onCheckIsLogin();
-  }
-
   onLogin(){
     this.props.onLoginRequest();
   }

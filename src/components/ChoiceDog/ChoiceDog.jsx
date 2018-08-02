@@ -1,18 +1,19 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import PropTypes from 'prop-types';
 import "./ChoiceDog.css";
-import { Redirect, withRouter } from 'react-router-dom';
-import firebase from '../../services/firebase';
+import { withRouter } from 'react-router-dom';
 import ReactDOM from 'react-dom';
+import firebase from '../../services/firebase';
+import cron from "node-cron";
 const modalRoot = document.getElementById("modal-root");
 
 class ChoiceDog extends Component {
-    constructor(props){
+    constructor(props) {
         super(props);
 
         this.state = {
-            timeRequired: 30,
-            show:false
+            timeRequired: 0,
+            show: false
         }
 
         this.el = document.createElement("div");
@@ -39,8 +40,86 @@ class ChoiceDog extends Component {
         });
     }
 
-    submit(ev){
-        console.log(ev.target.textContent)
+    submit(ev) {
+        if (this.state.timeRequired === 0) {
+            alert("예상 소요시간을 입력해 주세요");
+        } else {
+            var userRef = firebase.database().ref();
+            var date = new Date();
+            var yyyy = date.getFullYear();
+            var dd = date.getDate();
+            var mm = (date.getMonth() + 1);
+
+            if (dd < 10)
+                dd = "0" + dd;
+
+            if (mm < 10)
+                mm = "0" + mm;
+
+            var current_day = yyyy + "-" + mm + "-" + dd;
+
+            var hours = date.getHours()
+            var minutes = date.getMinutes()
+            var seconds = date.getSeconds();
+
+            if (hours < 10)
+                hours = "0" + hours;
+
+            if (minutes < 10)
+                minutes = "0" + minutes;
+
+            if (seconds < 10)
+                seconds = "0" + seconds;
+
+            var date_format_str =  current_day + " " + hours + ":" + minutes + ":" + seconds;
+
+                userRef
+                .child('users/' + this.props.userUid + '/dogs_list/' + ev.target.dataset.id)
+                .update({ is_walking: true });
+
+                userRef
+                .child('users/' + this.props.userUid + '/dogs_list/' + ev.target.dataset.id + "/walk_time")
+                .push(date_format_str);
+
+                this.onClose(ev);
+
+                var userUid = this.props.userUid;
+                var dogUid = ev.target.dataset.id;
+                var checkTime
+
+                switch (this.state.timeRequired) {
+                    case '10':
+                        checkTime = "* 10 * * * *";
+                        break;
+                    case '30':
+                        checkTime = "* 30 * * * *";
+                        break;
+                    case '60':
+                        checkTime = "* * 1 * * *";
+                        break;
+                    case '90':
+                        checkTime = "* 30 1 * * *";
+                        break;
+                    case '120':
+                        checkTime = "* * 2 * * *";
+                        break;
+                    default:
+                      checkTime = "* 30 * * * *";
+                }
+
+            var cronjob = cron.schedule(checkTime, () => {
+                firebase
+                .database()
+                .ref()
+                .child('users/' + userUid+ '/dogs_list/' + dogUid)
+                .update({ is_walking: false });
+                console.log("cron job is done");
+
+                cronjob.destroy();
+            }, false);
+
+            cronjob.start();
+        }
     }
 
     render() {
@@ -49,7 +128,6 @@ class ChoiceDog extends Component {
                 <div className="float-right closebtn">
                     <button type="button" className="close ti-close" onClick={(ev) => { this.onClose(ev) }}></button>
                 </div>
-                {/* <div className="container "> */}
                 <div className="container">
                     <div className="align-middle">
                         <div className="form-group">
@@ -64,10 +142,21 @@ class ChoiceDog extends Component {
                             </select>
                         </div>
                         <div className="list-group">
-                            <button type="button" className="list-group-item list-group-item-action" onClick={this.submit.bind(this)}>Cras justo odio</button>
-                            <button type="button" className="list-group-item list-group-item-action">Dapibus ac facilisis in</button>
-                            <button type="button" className="list-group-item list-group-item-action">Morbi leo risus</button>
-                            <button type="button" className="list-group-item list-group-item-action">Porta ac consectetur ac</button>
+                            {
+                                this.props.dogsList && this.props.dogsList.map((data, index) => {
+                                    return (
+                                        <button
+                                            key={index}
+                                            type="button"
+                                            className="list-group-item list-group-item-action"
+                                            data-id={data.id}
+                                            onClick={this.submit.bind(this)}
+                                        >
+                                            {data.dog_name}
+                                        </button>
+                                    );
+                                })
+                            }
                         </div>
                     </div>
                 </div>
@@ -86,7 +175,3 @@ class ChoiceDog extends Component {
 }
 
 export default withRouter(ChoiceDog);
-
-ChoiceDog.propTypes = {
-    onLoginRequest: PropTypes.func
-};

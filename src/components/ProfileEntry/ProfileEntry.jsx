@@ -1,19 +1,40 @@
 import React, { Component } from "react";
-import PropTypes from 'prop-types';
 import "./ProfileEntry.css";
-import { Redirect, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
+import firebase from '../../services/firebase';
+import ProfileEditForm from "../ProfileEditForm/ProfileEditForm.jsx";
 
 class ProfileEntry extends Component {
-    componentDidMount() {
+    constructor(props){
+        super(props);
+
+        this.state = {
+            show: false,
+        }
     }
+
+    showModal = () => {
+        this.setState({
+            ...this.state,
+            show: !this.state.show
+        });
+    }
+
+    delete = () => {
+        const usersRef = firebase.database().ref('users/'+ this.props.userUid + "/dogs_list/" + this.props.dog.id);
+        usersRef.remove()
+        .then(alert("data successfully deleted "));
+    }
+
 
     render() {
         return (
             <div className="col-12 col-lg-4">
+                <ProfileEditForm onClose={this.showModal} show={this.state.show} {...this.props} />
                 <div className="card features">
-                    <div className="offset-8">
-                        <button className="btn-sm btn-outline-info">수정</button>
-                        <button className="btn-sm btn-outline-danger">삭제</button>
+                    <div className="button-group">
+                        <button className="btn-sm btn-outline-info" onClick={this.showModal} data-id={this.props.dog.id}>수정</button>
+                        <button className="btn-sm btn-outline-danger" onClick={this.delete}>삭제</button>
                     </div>
                     <div className="card-body">
                         <div className="media">
@@ -32,7 +53,3 @@ class ProfileEntry extends Component {
 }
 
 export default withRouter(ProfileEntry);
-
-ProfileEntry.propTypes = {
-    onLoginRequest: PropTypes.func
-};

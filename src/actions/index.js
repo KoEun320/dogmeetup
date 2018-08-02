@@ -1,5 +1,4 @@
-import { AllDOGSLIST,LOGIN_SUCCESS, LOGIN_REQUEST, LOGIN_FAILURE, LOGIN_CHECK, DOGSLISTBYUSER, GET_LOCATION } from "../constants";
-import { history } from '../services/history';
+import {LOGIN_SUCCESS, LOGIN_REQUEST, LOGIN_FAILURE, LOGIN_CHECK, DOGSLISTBYUSER, GET_LOCATION, AllDOGSLIST } from "../constants";
 
 
 export const loginSuccess = ({ displayName, email, uid }) => {

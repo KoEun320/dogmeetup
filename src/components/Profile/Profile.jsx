@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import PropTypes from 'prop-types';
 import "./Profile.css";
 import ProfileEntry from "../ProfileEntry/ProfileEntry";
 import { withRouter } from 'react-router-dom';
@@ -40,7 +39,7 @@ class Profile extends Component {
                     {   this.props.dogsList &&
                         this.props.dogsList.map((data, index) => {
                             return(
-                                <ProfileEntry key={index} dog={data} />
+                                <ProfileEntry key={index} dog={data} userUid={this.props.userUid}/>
                             )
                         })
 
@@ -54,7 +53,3 @@ class Profile extends Component {
 }
 
 export default withRouter(Profile);
-
-Profile.propTypes = {
-
-};

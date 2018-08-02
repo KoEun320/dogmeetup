@@ -3,7 +3,6 @@ import { withRouter } from "react-router-dom";
 import AppComponent from "../components/App/App.jsx";
 import firebase from 'firebase/app';
 import { loginRequest, loginSuccess,  loginFailure, getDogsListbyUser, getAllDogsList, getUserLocation} from "./../actions";
-import { history } from '../services/history';
 
 
 //앱으로 props 내려주는곳 꼭 reducer컨바인이랑 같을 필요가 없다.
@@ -27,7 +26,7 @@ const mapDispatchToProps = dispatch => ({
 
     firebase.auth().signInWithPopup(provider).then((result) => {
       // This gives you a Facebook Access Token. You can use it to access the Facebook API.
-      var token = result.credential.accessToken;
+      // var token = result.credential.accessToken;
       // The signed-in user info.
       var user = result.user;
       var usersRef = firebase.database().ref('users/');
@@ -59,8 +58,9 @@ const mapDispatchToProps = dispatch => ({
       // The email of the user's account used.
       var email = error.email;
       // The firebase.auth.AuthCredential type that was used.
-      var credential = error.credential;
+      //var credential = error.credential;
 
+      console.log(errorCode + " error :" + errorMessage + " with " + email);
       dispatch(loginFailure(error));
     });
   },
@@ -110,7 +110,6 @@ const mapDispatchToProps = dispatch => ({
   onLoadAllDogsList: () => {
     const dbRefUsersList = firebase.database().ref().child('users/');
     let dogsArray = [];
-    let allDogsList = []
 
     dbRefUsersList.on('value', snapshot => {
       var snap = snapshot.val();
@@ -123,38 +122,24 @@ const mapDispatchToProps = dispatch => ({
           dogsArray.push(snap[keys[i]]);
         }
 
-        dogsArray.map((data, i) => {
-            var location = data.location;
-            var list = data.dogs_list;
-            var keys = Object.keys(list);
-
-            for(var i =0; i < keys.length; i++){
-              list[keys[i]].id = keys[i];
-              var merge = Object.assign(list[keys[i]], location);
-              //allDogsList.push(list[keys[i]]);
-              allDogsList.push(merge);
-            }
-        });
-
-        dispatch(getAllDogsList(allDogsList));
+        dispatch(getAllDogsList(dogsArray));
         dogsArray = [];
-        allDogsList =[];
       }
     });
   },
 
   getLocation: (userUid) => {
     function geo_success(position) {
-      var usersRef = firebase.database().ref('users/');
       const location = {
         latitude : position.coords.latitude,
         longitude: position.coords.longitude
       };
+      var usersRef = firebase.database().ref('users/');
 
-        usersRef.child(userUid).child("location").set({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude
-        });
+      usersRef.child(userUid).child("location").set({
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude
+      });
 
         dispatch(getUserLocation(location));
     }

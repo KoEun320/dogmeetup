@@ -1,20 +1,21 @@
 import React, { Component } from "react";
-import "./ProfileForm.css";
+import PropTypes from 'prop-types';
+import "./ProfileEditForm.css";
 import { withRouter } from 'react-router-dom';
 import firebase from '../../services/firebase';
 import ReactDOM from 'react-dom';
 
 const modalRoot = document.getElementById("modal-root");
 
-class ProfileForm extends Component {
+class ProfileEditForm extends Component {
     constructor(props){
         super(props);
 
         this.state = {
-            dogName: "",
-            dogAge: "",
-            dogBreed: "",
-            dogCharacter:"",
+            dogName: props.dog.dog_name,
+            dogAge: props.dog.dog_age,
+            dogBreed: props.dog.dog_breed,
+            dogCharacter: props.dog.dog_character,
             show:false,
             thumbnailImageFile: null,
             isUploading: false
@@ -40,61 +41,78 @@ class ProfileForm extends Component {
 
     handleSubmit(event){
         event.preventDefault();
-        if(
-            this.state.dogName === ""||
-            this.state.dogAge === "" ||
-            this.state.dogBreed === "" ||
-            this.state.dogCharacter === "" ||
-            !this.state.thumbnailImageFile
-        ) {
-            alert("빈 항목을 채워주세요.")
-        }
 
-        const storageRef = firebase.storage().ref();
         const usersRef = firebase.database().ref('users/'+this.props.userUid);
-        const thumbnailImageFileName = this.state.thumbnailImageFile.name;
-        const thumbnailImageFileRef = storageRef.child(`images/${thumbnailImageFileName}` );
-        const thumbnailImageFilePromise = thumbnailImageFileRef.put(this.state.thumbnailImageFile);
-        const createKey = usersRef.push().key;
+        const dogKey = this.props.dog.id;
 
-        Promise.all([thumbnailImageFilePromise])
-        .then(() => {
-        let thumbnailDownloadURL;
+        if(this.state.thumbnailImageFile) {
+            const storageRef = firebase.storage().ref();
+            const thumbnailImageFileName = this.state.thumbnailImageFile.name;
+            const thumbnailImageFileRef = storageRef.child(`images/${thumbnailImageFileName}` );
+            const thumbnailImageFilePromise = thumbnailImageFileRef.put(this.state.thumbnailImageFile);
 
-                Promise.all([
-                    thumbnailImageFilePromise.snapshot.ref.getDownloadURL(),
-                ]).then(results => {
-                    thumbnailDownloadURL = results[0];
-                    usersRef
-                        .child('dogs_list')
-                        .child(createKey)
-                        .set({
-                            dog_name: this.state.dogName,
-                            dog_age: this.state.dogAge,
-                            dog_breed: this.state.dogBreed,
-                            dog_character: this.state.dogCharacter,
-                            image_url: thumbnailDownloadURL,
-                            walk_time: [],
-                            is_walking: false,
-                        })
-                        .then(() => {
-                            alert("Data saved successfully.");
-                            this.setState({
-                                dogName: "",
-                                dogAge: "",
-                                dogBreed: "",
-                                dogCharacter:"",
-                                thumbnailImageFile: null,
-                                isUploading: false
+            Promise.all([thumbnailImageFilePromise])
+            .then(() => {
+            let thumbnailDownloadURL;
+
+                    Promise.all([
+                        thumbnailImageFilePromise.snapshot.ref.getDownloadURL(),
+                    ]).then(results => {
+                        thumbnailDownloadURL = results[0];
+                        usersRef
+                            .child('dogs_list')
+                            .child(dogKey)
+                            .update({
+                                dog_name: this.state.dogName,
+                                dog_age: this.state.dogAge,
+                                dog_breed: this.state.dogBreed,
+                                dog_character: this.state.dogCharacter,
+                                image_url: thumbnailDownloadURL,
+                            })
+                            .then(() => {
+                                alert("Data changed successfully.");
+                                this.setState({
+                                    id: '',
+                                    title: '',
+                                    description: '',
+                                    thumbnailImageFile: null,
+                                    isUploading: false
+                                });
+                                this.onClose(event);
                             });
-                            this.onClose(event);
-                        });
+                    });
+                })
+                .catch(error => {
+                    alert("Please, try again")
+                    console.error(error);
                 });
-            })
-            .catch(error => {
-                alert("Please, try again")
-                console.error(error);
-            });
+            } else {
+                usersRef
+                    .child('dogs_list')
+                    .child(dogKey)
+                    .update({
+                        dog_name: this.state.dogName,
+                        dog_age: this.state.dogAge,
+                        dog_breed: this.state.dogBreed,
+                        dog_character: this.state.dogCharacter,
+                    })
+                    .then(() => {
+                        alert("Data changed successfully.");
+                        this.setState({
+                            id: '',
+                            title: '',
+                            description: '',
+                            thumbnailImageFile: '',
+                            isUploading: false
+                        });
+                        this.onClose(event);
+                    })
+                    .catch(error => {
+                        alert("Please, try again")
+                        console.error(error);
+                    });
+            }
+
 
     }
 
@@ -135,12 +153,12 @@ class ProfileForm extends Component {
                                 <div className="media-body">
                                     <h4 className="card-title row">
                                         <label className="col-form-label" htmlFor="dogName">이름:</label>
-                                        <input className="form-control col-sm-6" type="text" name="dogName" onChange={this.handleChange} />
+                                        <input className="form-control" type="text" name="dogName" value={this.state.dogName} onChange={this.handleChange} />
                                     </h4>
                                     <p className="card-text ">
                                         <label className="col-form-label" htmlFor="dogBreed">종류:</label>
-                                        <select name="dogBreed" className="custom-select form-control mb-3" onChange={this.handleChange}>
-                                            <option defaultValue >선택해 주세요</option>
+                                        <select name="dogBreed" className="custom-select form-control mb-3"  value={this.state.dogBreed} onChange={this.handleChange}>
+                                            <option>선택해 주세요</option>
                                             <option value="아펜핀셔">아펜핀셔</option>
                                             <option value="아프리칸">아프리칸</option>
                                             <option value="에어데일">에어데일</option>
@@ -196,13 +214,13 @@ class ProfileForm extends Component {
                                     </p>
                                     <p className="card-text">
                                         <label className="col-form-label" htmlFor="dogAge">나이:</label>
-                                        <input className="form-control col-sm-2" type="number" name="dogAge" min="1" max="30" onChange={this.handleChange} />
+                                        <input className="form-control col-sm-2" type="number" name="dogAge" min="1" max="30" value={this.state.dogAge} onChange={this.handleChange} />
                                     </p>
                                     <p className="card-text ">
                                         <label htmlFor="dogCharacter">성격|특징:</label>
-                                        <input className="form-control" name="dogCharacter" type="text" onChange={this.handleChange} />
+                                        <input className="form-control" name="dogCharacter" type="text" value={this.state.dogCharacter} onChange={this.handleChange} />
                                     </p>
-                                    <button className="btn btn-primary mb-3" onSubmit={this.onSubmitHandler} type="submit">추가 하기</button>
+                                    <button className="btn btn-primary mb-3" onSubmit={this.onSubmitHandler} type="submit">수정 하기</button>
                                 </div>
                             </div>
                         </div>
@@ -223,5 +241,8 @@ class ProfileForm extends Component {
     }
 }
 
-export default withRouter(ProfileForm);
+export default withRouter(ProfileEditForm);
 
+ProfileEditForm.propTypes = {
+    onLoginRequest: PropTypes.func
+};

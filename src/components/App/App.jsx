@@ -3,9 +3,10 @@ import { Router, Route,Redirect } from "react-router-dom";
 import "./App.css";
 import Login from '../Login/Login.jsx';
 import Nav from '../Nav/Nav.jsx';
-import Main from '../Main/Main';
+import Main from '../Main/Main.jsx';
 import { history } from '../../services/history';
 import Profile from '../Profile/Profile.jsx';
+import WalkRecord from '../WalkRecord/WalkRecord.jsx';
 
 class App extends Component {
   componentDidMount() {
@@ -19,7 +20,6 @@ class App extends Component {
           <div data-spy="scroll" data-target="#navbar" data-offset="30">
               <Nav {...this.props}/>
               <Route exact path="/" render={(props)=> {
-                console.log(props)
                 if(this.props.email) {
                   return (<Redirect to="/profile" />)
                 }
@@ -33,9 +33,9 @@ class App extends Component {
                   );
               }} />
               <Route exact path="/profile" render={(props) => {
-                // if(!this.props.email) {
-                //   return (<Redirect to="/" />)
-                // }
+                if(!this.props.email) {
+                  return (<Redirect to="/" />)
+                }
                 return (
                   <Fragment>
                     <Profile {...this.props} {...props} />
@@ -49,6 +49,16 @@ class App extends Component {
                 return (
                   <Fragment>
                     <Main {...this.props} {...props} />
+                  </Fragment>
+                );
+              }} />
+              <Route exact path="/record" render={(props) => {
+                if(!this.props.email) {
+                  return (<Redirect to="/" />)
+                }
+                return (
+                  <Fragment>
+                    <WalkRecord {...this.props} {...props} />
                   </Fragment>
                 );
               }} />

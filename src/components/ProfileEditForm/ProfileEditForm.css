@@ -21,3 +21,14 @@
     padding-left: 5px;
     vertical-align: middle;
 }
+
+.modal_position {
+    margin-top: 40%;
+}
+
+.closebtn {
+    position: absolute;
+    top: 5%;
+    right: 5%;
+}
+
