@@ -129,6 +129,7 @@ const mapDispatchToProps = dispatch => ({
   },
 
   getLocation: (userUid) => {
+    debugger
     function geo_success(position) {
       const location = {
         latitude : position.coords.latitude || 37.5662952,
@@ -145,7 +146,20 @@ const mapDispatchToProps = dispatch => ({
     }
 
     function geo_error() {
-      alert("위치 정보를 사용할 수 없습니다.");
+      alert("위치 정보를 사용할 수 없어서 서울 시청으로 기록됩니다");
+      const location = {
+        latitude : 37.5662952,
+        longitude: 126.97794509999994
+      };
+
+      dispatch(getUserLocation(location));
+
+      var usersRef = firebase.database().ref('users/');
+
+      usersRef.child(userUid).child("location").set({
+        latitude: 37.5662952,
+        longitude: 126.97794509999994
+      });
     }
 
     var geo_options = {
