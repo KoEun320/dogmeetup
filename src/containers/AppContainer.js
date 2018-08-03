@@ -129,7 +129,6 @@ const mapDispatchToProps = dispatch => ({
   },
 
   getLocation: (userUid) => {
-    debugger
     function geo_success(position) {
       const location = {
         latitude : position.coords.latitude || 37.5662952,
