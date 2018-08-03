@@ -1,10 +1,9 @@
 import React, { Component, Fragment } from "react";
-import { Router, Route,Redirect } from "react-router-dom";
+import { HashRouter, Route,Redirect } from "react-router-dom";
 import "./App.css";
 import Login from '../Login/Login.jsx';
 import Nav from '../Nav/Nav.jsx';
 import Main from '../Main/Main.jsx';
-import { history } from '../../services/history';
 import Profile from '../Profile/Profile.jsx';
 import WalkRecord from '../WalkRecord/WalkRecord.jsx';
 
@@ -15,7 +14,7 @@ class App extends Component {
 
   render() {
     return (
-      <Router history={history}>
+      <HashRouter>
         <Fragment>
           <div data-spy="scroll" data-target="#navbar" data-offset="30">
               <Nav {...this.props}/>
@@ -64,7 +63,7 @@ class App extends Component {
               }} />
           </div>
         </Fragment>
-      </Router>
+      </HashRouter>
     )
   }
 }

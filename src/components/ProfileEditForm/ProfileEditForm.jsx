@@ -51,6 +51,8 @@ class ProfileEditForm extends Component {
             const thumbnailImageFileRef = storageRef.child(`images/${thumbnailImageFileName}` );
             const thumbnailImageFilePromise = thumbnailImageFileRef.put(this.state.thumbnailImageFile);
 
+            this.setState({isUploading: true});
+
             Promise.all([thumbnailImageFilePromise])
             .then(() => {
             let thumbnailDownloadURL;
@@ -72,9 +74,10 @@ class ProfileEditForm extends Component {
                             .then(() => {
                                 alert("Data changed successfully.");
                                 this.setState({
-                                    id: '',
-                                    title: '',
-                                    description: '',
+                                    dogName: "",
+                                    dogAge: "",
+                                    dogBreed: "",
+                                    dogCharacter:"",
                                     thumbnailImageFile: null,
                                     isUploading: false
                                 });
@@ -99,10 +102,11 @@ class ProfileEditForm extends Component {
                     .then(() => {
                         alert("Data changed successfully.");
                         this.setState({
-                            id: '',
-                            title: '',
-                            description: '',
-                            thumbnailImageFile: '',
+                            dogName: "",
+                            dogAge: "",
+                            dogBreed: "",
+                            dogCharacter:"",
+                            thumbnailImageFile: null,
                             isUploading: false
                         });
                         this.onClose(event);
@@ -319,17 +323,19 @@ class ProfileEditForm extends Component {
 
         if (!this.props.show) {
             return null;
+        } else if (this.state.isUploading){
+            return (
+            <div className="loading">
+                <img src="https://firebasestorage.googleapis.com/v0/b/dogmeetup-944aa.appspot.com/o/91.gif?alt=media&token=997300f3-e0c9-457a-b7d3-0bd6e5f1f529" alt="loading"/>
+            </div>
+            )
+        } else {
+            return ReactDOM.createPortal(
+                writeProfile,
+                this.el,
+            );
         }
-
-        return ReactDOM.createPortal(
-            writeProfile,
-            this.el,
-        );
     }
 }
 
 export default withRouter(ProfileEditForm);
-
-ProfileEditForm.propTypes = {
-    onLoginRequest: PropTypes.func
-};

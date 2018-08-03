@@ -88,7 +88,7 @@ class ChoiceDog extends Component {
 
                 switch (this.state.timeRequired) {
                     case '10':
-                        checkTime = "* 10 * * * *";
+                        checkTime = "2 * * * * *";
                         break;
                     case '30':
                         checkTime = "* 30 * * * *";
@@ -114,8 +114,8 @@ class ChoiceDog extends Component {
                 .update({ is_walking: false });
                 console.log("cron job is done");
 
-                cronjob.destroy();
-            }, false);
+                cronjob.stop();
+            } , false );
 
             cronjob.start();
         }

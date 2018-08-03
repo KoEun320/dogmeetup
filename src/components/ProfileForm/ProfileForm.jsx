@@ -39,7 +39,7 @@ class ProfileForm extends Component {
     }
 
     handleSubmit(event){
-        event.preventDefault();
+        event.persist();
         if(
             this.state.dogName === ""||
             this.state.dogAge === "" ||
@@ -55,6 +55,8 @@ class ProfileForm extends Component {
             const thumbnailImageFileRef = storageRef.child(`images/${thumbnailImageFileName}` );
             const thumbnailImageFilePromise = thumbnailImageFileRef.put(this.state.thumbnailImageFile);
             const createKey = usersRef.push().key;
+
+            this.setState({isUploading: true});
 
             Promise.all([thumbnailImageFilePromise])
             .then(() => {
@@ -300,12 +302,18 @@ class ProfileForm extends Component {
 
         if (!this.props.show) {
             return null;
+        } else if (this.state.isUploading){
+            return (
+            <div className="loading">
+                <img src="https://firebasestorage.googleapis.com/v0/b/dogmeetup-944aa.appspot.com/o/91.gif?alt=media&token=997300f3-e0c9-457a-b7d3-0bd6e5f1f529" alt="loading"/>
+            </div>
+            )
+        } else {
+            return ReactDOM.createPortal(
+                writeProfile,
+                this.el,
+            );
         }
-
-        return ReactDOM.createPortal(
-            writeProfile,
-            this.el,
-        );
     }
 }
 

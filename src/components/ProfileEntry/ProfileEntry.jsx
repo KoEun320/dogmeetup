@@ -23,7 +23,10 @@ class ProfileEntry extends Component {
     delete = () => {
         const usersRef = firebase.database().ref('users/'+ this.props.userUid + "/dogs_list/" + this.props.dog.id);
         usersRef.remove()
-        .then(alert("data successfully deleted "));
+        .then(
+            alert("data successfully deleted "),
+            this.props.onLoadDogsList(this.props.userUid)
+        );
     }
 
 

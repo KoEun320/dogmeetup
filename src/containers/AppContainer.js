@@ -131,14 +131,14 @@ const mapDispatchToProps = dispatch => ({
   getLocation: (userUid) => {
     function geo_success(position) {
       const location = {
-        latitude : position.coords.latitude,
-        longitude: position.coords.longitude
+        latitude : position.coords.latitude || 37.5662952,
+        longitude: position.coords.longitude || 126.97794509999994
       };
       var usersRef = firebase.database().ref('users/');
 
       usersRef.child(userUid).child("location").set({
-        latitude: position.coords.latitude,
-        longitude: position.coords.longitude
+        latitude: position.coords.latitude || 37.5662952,
+        longitude: position.coords.longitude ||126.97794509999994
       });
 
         dispatch(getUserLocation(location));
