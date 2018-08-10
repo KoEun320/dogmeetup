@@ -10,15 +10,15 @@
 
 ## Features
 - Facebook을 이용한 로그인 서비스 구현
-- 나의 강아지 리스트 등록/수정/삭제
+- 나의 개 리스트 등록/수정/삭제
 - google map을 이용한 지도 표시
 - geoLocation을 이용한 현재 위치 표시
-- 산책중/휴식중 표시 가능
-- 산책 기록 확인가능
+- 산책중/휴식중 표시
+- 나의 개 리스트별 산책 기록 확인
 
 ## Client-Side
 - React로 UI아키텍쳐 구현
-- Redux로 state관리
+- Redux를 사용하여 state 관리
 - middleware : Redux-logger로 개발시 action및 state debugging 간편화
 - CSS : BootStrap 프레임워크 사용
 
