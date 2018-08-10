@@ -1,7 +1,7 @@
 # Introduction
 ㄱ ㅐ모임은 내가 산책하고 있는 주변에 다른 산책을 하거나 근처에 사는 개를 찾아볼수 있는 플랫폼입니다.
 
-![snapshot_dogmeetup](https://user-images.githubusercontent.com/34699932/43965372-03170a32-9cfa-11e8-8112-8b846a655e2f.jpg)
+![snapshot-dogmeetup](https://user-images.githubusercontent.com/34699932/43967035-698c19ca-9cfe-11e8-9550-230397806d8a.jpg)
 
 ## Requirements
 - ㄱ ㅐ모임은 Facebook 가입자만 이용 가능합니다.
@@ -25,3 +25,4 @@
 ## Server-Side
 - firebase를 이용한 realtime database시스템
 - firebase storage를 이용한 이미지 업로드
+- facebook API를 이용한 로그인/ 로그아웃 구현
